@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.1/angular.min.js"></script>
+
+    <style media="screen" type="text/css">
+        .linkLbl
+        {
+            cursor: pointer;
+        }
+    </style>
+
+    <title></title>
+</head>
+<body>
+<h2>TODO</h2>
+<div ng-controller="AlbumCtrl">
+
+    <ul class="unstyled">
+        <li ng-repeat="album in albums">
+            <span>{{album.name}}</span>
+        </li>
+    </ul>
+
+    <span ng-click="toggleMenu()" class="linkLbl">{{toggle}}</span>
+    <form ng-submit="addAlbum()" ng-show="menuState.show">
+        <input type="text" ng-model="albumName" size="30"
+               placeholder="type album name here">
+        <input class="btn-primary" type="submit" value="add">
+    </form>
+</div>
+
+<script>
+    var myApp = angular.module('myApp',[]);
+    myApp.controller('AlbumCtrl', ['$scope', function($scope)
+    {
+        $scope.albums = [{name:'Bob Dylan greatest hits'},{name: 'Donna and Althea'}];
+        $scope.menuState = {show:false};
+        $scope.toggle = "Show";
+
+        $scope.addAlbum = function()
+        {
+            if($scope.albumName)
+            {
+                $scope.albums.push({name:$scope.albumName});
+                $scope.albumName = '';
+            }
+        }
+
+        $scope.toggleMenu = function()
+        {
+            $scope.menuState.show = !$scope.menuState.show;
+            if($scope.menuState.show)
+            {
+                $scope.toggle = "Hide";
+            }else{
+                $scope.toggle = "Show"
+            }
+        }
+    }]);
+</script>
+</body>
+</html>
