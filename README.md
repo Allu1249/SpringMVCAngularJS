@@ -20,6 +20,6 @@ triggered from javascript.~~ TODO need to add other operations but basic plumbin
 
 *CLIENT*
 
-1.Create the TODO app in single html file WEB-INF/pages/todo.html
-2. Make index page that links to the todo.html page this page will link to all test pages
+1. ~~Create the TODO app in single html file WEB-INF/pages/todo.html~~
+2. ~~Make index page that links to the todo.html page this page will link to all test pages~~
 3. Add ajax functionality to the todo.html to retrieve and update/store items on the serverside.
