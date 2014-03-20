@@ -1,15 +1,17 @@
 package be.rd.mvc;
 
 import be.rd.beans.Todo;
-import be.rd.beans.Todo_;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.SingularAttribute;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -20,49 +22,135 @@ import java.util.Set;
 @RequestMapping("/meta")
 public class MetaModelController {
 
+    @PersistenceContext
+    EntityManager emf;
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public SelectionNode getRoot()
     {
-        return new SelectionNode();
+        return new SelectionNode(Todo.class.getName());
     }
 
-    class SelectionNode implements Serializable
+    @RequestMapping(value = "/{className}", method = RequestMethod.GET)
+    @ResponseBody
+    public SelectionNode getRoot(@PathVariable String className)
     {
-        private String nodeName;
-        private String[] fields;
-        private SelectionNode[] links;
+        return new SelectionNode(className);
+    }
 
-        public SelectionNode(){
+    @RequestMapping(value = "/child/{className}", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<ClosedNode> getAttributesForClass(@PathVariable String className)
+    {
+        return new SelectionNode(className).getChildren();
+    }
 
-            this.nodeName = Todo_.id.getDeclaringType().getJavaType().getSimpleName();
-            Set<Attribute<Todo, ?>> atts = Todo_.id.getDeclaringType().getDeclaredAttributes();
-            Iterator<Attribute<Todo, ?>> it = atts.iterator();
-            fields = new String[atts.size()];
-            for (int i = 0; it.hasNext(); i++)
-            {
-                Attribute<Todo, ?> att= it.next();
-                att.getJavaMember();
+    /**
+     *
+     */
+    class ClosedNode implements  Serializable
+    {
+        private String text;
+        private String data;
+        private boolean children = false;
 
-               if(isAssociation(att)){
-                    fields[i] = "link-" + att.getName();
-                }else{
-                    fields[i] = att.getName();
-                }
+        // node for field
+        public ClosedNode(String data, String text){
+            this.data = data;
+            this.text = text;
+        }
 
+        // node for link (has children and can be opened)
+        public ClosedNode(String className){
+
+            try{
+                javax.persistence.metamodel.EntityType t = emf.getMetamodel().entity(Class.forName(className));
+                this.text = className;
+                this.data = t.getName();
+                children = true;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
 
-        public String getNodeName() {
-            return nodeName;
+        public String getText() {
+            return text;
         }
 
-        public String[] getFields() {
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public String getData() {
+            return data;
+        }
+
+        public void setData(String data) {
+            this.data = data;
+        }
+
+        public boolean isChildren() {
+            return children;
+        }
+
+        public void setChildren(boolean children) {
+            this.children = children;
+        }
+    }
+
+    /**
+     *
+     */
+    class SelectionNode implements Serializable
+    {
+        private String text;
+        private String data;
+        /*private Set<String> fields;*/
+        private Set<ClosedNode> children;
+
+        public SelectionNode(String data, String text){
+            this.data = data;
+            this.text = text;
+        }
+
+        public SelectionNode(String className){
+
+            children = new HashSet<ClosedNode>();
+            try {
+                javax.persistence.metamodel.EntityType t = emf.getMetamodel().entity(Class.forName(className));
+                this.text = className;
+                this.data = t.getName();
+                Iterator<Attribute> it = t.getAttributes().iterator();
+                for (int i = 0; it.hasNext(); i++)
+                {
+                    Attribute att= it.next();
+                    if(isAssociation(att)){
+                        children.add(new ClosedNode(att.getJavaType().getName()));
+                    }else{
+                        children.add(new ClosedNode(att.getName(), att.getName()));
+                    }
+
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public String getData() {
+            return data;
+        }
+
+/*        public Set<String> getFields() {
             return fields;
-        }
+        }*/
 
-        public SelectionNode[] getLinks() {
-            return links;
+        public Set<ClosedNode> getChildren() {
+            return children;
         }
 
         /** need to check this myself since org.hibernate.ejb.metamodel.SingularAttributeImpl.isAssocation()

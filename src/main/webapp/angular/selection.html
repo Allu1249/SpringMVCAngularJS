@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/script/jstree/jstree.js"></script>
+
+    <link rel="stylesheet" href="/script/jstree/themes/default/style.css" />
+
+    <style media="screen" type="text/css">
+        .done-true {
+            text-decoration: line-through;
+            color: grey;
+        }
+    </style>
+
+    <title></title>
+</head>
+<body>
+<h2>TODO</h2>
+<!--<div ng-controller="TodoCtrl" id="static">
+</div>-->
+
+<div ng-controller="TodoCtrl" id="using_json">
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#using_json').jstree({
+            'core' : {
+                'data' : {
+                    'url' : function (node) {
+                        return (node && node.text) ? // Todo this check can probably be better
+                                'http://localhost:8080/meta/child/'+node.text+'/':
+                                'http://localhost:8080/meta';
+                    },
+                    'data' : function (node) {
+                        return { 'id' : node.id };
+                    }
+                }
+            }
+            /*,"plugins" : [ "wholerow", "checkbox" ]*/
+        });
+    });
+</script>
+</body>
+</html>

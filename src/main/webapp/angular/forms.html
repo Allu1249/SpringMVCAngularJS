@@ -22,7 +22,7 @@
     <form ng-controller="formCtrl2" ng-submit="computeFund()">
         Starting estimate<input type="text" ng-model="funding.estimate" size="30"
                                 placeholder="estimate here">
-        <span>{{funding.calculated}} </span>
+        <span>{{funding.calculated | currency}} </span>
         <p><button>Calculate</button></p>
         <p><button ng-click="reset()">Reset</button></p>
     </form>
