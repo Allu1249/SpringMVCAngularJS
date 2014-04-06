@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.1/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.1/angular-resource.min.js"></script>
+
+    <style media="screen" type="text/css">
+
+    </style>
+
+    <title></title>
+</head>
+<body>
+<h2>Shop</h2>
+<div ng-controller="ShoppingCtrl">
+
+   <table>
+       <tr ng-repeat="item in items">
+            <td>{{item.title}}</td>
+            <td>{{item.description}}</td>
+            <td>{{item.price | currency}}</td>
+       </tr>
+   </table>
+
+</div>
+
+<script>
+     var myApp = angular.module('myApp',[]);
+
+     // mock items service
+     myApp.factory('itemService', function(){
+        var items = {};
+        items.query = function(){
+            return[{title: "skilder potten", description: "potten vo verfe njee", price: 29.99 },
+            {title: "bloempotten", description: "potten vo bloemn njee", price: 39.99 },
+            {title: "ceedeets", description: "me muziek ip njee", price: 19.99 }]
+        };
+         return items;
+     });
+
+     myApp.controller('ShoppingCtrl', ['$scope', 'itemService', function($scope, itemService)
+     {
+        $scope.items =itemService.query();
+    }]);
+</script>
+</body>
+</html>

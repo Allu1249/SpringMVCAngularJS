@@ -18,6 +18,7 @@
         <li><a href="angular/forms.html">Angular Forms</a></li>
         <li><a href="angular/albums.html">Angular Albums</a></li>
         <li><a href="angular/selection.html">Selection tree</a></li>
+        <li><a href="angular/shoppingItems.html">Shopping items</a></li>
     </ul>
 </div>
 

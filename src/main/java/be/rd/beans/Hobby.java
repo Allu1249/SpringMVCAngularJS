@@ -1,18 +1,18 @@
 package be.rd.beans;
 
 import javax.persistence.*;
-import java.util.Set;
+import javax.validation.constraints.NotNull;
 
 /**
- * Created by ruben on 3/16/14.
+ * Created by ruben on 4/6/14.
  */
 @Entity
 @Table
-public class User {
+public class Hobby {
     private Long id;
     private int version;
     private String name;
-    private Set<Hobby> hobbies;
+    private String description;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,15 +42,13 @@ public class User {
         this.name = name;
     }
 
-    @ManyToMany
-    @JoinTable(
-            name="USER2HOBBY",
-            joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
-            inverseJoinColumns={@JoinColumn(name="HOBBY_ID", referencedColumnName="ID")})
-    public Set<Hobby> getHobbies() {
-        return hobbies;
+    @Basic
+    @NotNull
+    @Column(name = "DESCRIPTION")
+    public String getDescription() {
+        return description;
     }
-    public void setHobbies(Set<Hobby> hobbies) {
-        this.hobbies = hobbies;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
