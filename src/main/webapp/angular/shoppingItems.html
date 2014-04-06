@@ -2,6 +2,8 @@
 <html ng-app="myApp">
 <head>
 
+    <!--TESTING SERVICES AND A CUSTOM FILTER-->
+
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.1/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.1/angular-resource.min.js"></script>
 
@@ -12,21 +14,37 @@
     <title></title>
 </head>
 <body>
-<h2>Shop</h2>
-<div ng-controller="ShoppingCtrl">
 
-   <table>
-       <tr ng-repeat="item in items">
-            <td>{{item.title}}</td>
-            <td>{{item.description}}</td>
-            <td>{{item.price | currency}}</td>
-       </tr>
-   </table>
+    <div ng-controller="ShoppingCtrl">
+
+        <h2>{{pageHeading}}</h2>
+        <h2>{{pageHeading | titleCase}}</h2>
+
+       <table>
+           <tr ng-repeat="item in items">
+                <td>{{item.title}}</td>
+                <td>{{item.description}}</td>
+                <td>{{item.price | currency}}</td>
+           </tr>
+       </table>
 
 </div>
 
 <script>
      var myApp = angular.module('myApp',[]);
+
+     // filter that uppercases the first letter of each word
+     myApp.filter('titleCase', function(){
+         var titleCaseFilter = function(input){
+             var words = input.split(' ');
+             for(var i = 0; i < words.length; i++){
+                 var curWord = words[i];
+                 words[i] = curWord.charAt(0).toUpperCase() + curWord.slice(1);
+             }
+             return words.join(' ');
+         }
+         return titleCaseFilter;
+     });
 
      // mock items service
      myApp.factory('itemService', function(){
@@ -41,6 +59,7 @@
 
      myApp.controller('ShoppingCtrl', ['$scope', 'itemService', function($scope, itemService)
      {
+        $scope.pageHeading = "Shop Items";
         $scope.items =itemService.query();
     }]);
 </script>

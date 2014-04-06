@@ -19,6 +19,7 @@
         <li><a href="angular/albums.html">Angular Albums</a></li>
         <li><a href="angular/selection.html">Selection tree</a></li>
         <li><a href="angular/shoppingItems.html">Shopping items</a></li>
+        <li><a href="angular/routes/main.html">routesTest</a></li>
     </ul>
 </div>
 
